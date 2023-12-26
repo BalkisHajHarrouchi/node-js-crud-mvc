@@ -1,0 +1,49 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <h1>{{title}}</h1>
+  <p>Welcome to {{title}} </p>
+  <div>
+<input type="text" onkeyup="isTyping()" id="msg">
+
+  <button onclick="sendMsg()" >Click me</button>
+  <script src="/socket.io/socket.io.js"></script>
+<script>
+    var name= prompt("Enter your name !")
+    var socket = io();
+    socket.on("msg",(data)=>{
+        var p= document.createElement('p')
+        p.innerHTML=data
+        document.body.append(p)
+    })
+
+function sendMsg(){
+  var input = document.getElementById("msg")
+    if(input.value){
+    socket.emit("send-msg", input.value)
+    input.value=''
+    }
+}
+
+function isTyping(){
+  var data = name + " is typing..."
+  console.log(data)
+  socket.emit("uTyping",data)
+
+}
+
+socket.on("msg-typing",(data)=>{
+        var p= document.createElement('p')
+        p.innerHTML=data
+        document.body.append(p)
+        setTimeout(()=>{
+          p.style.display= "none"
+        },2000)
+    })
+
+
+
+</script>
+ 
+  </div>
+{% endblock %}
